@@ -12,7 +12,7 @@ ui = dashboardPage(skin="blue",
     dashboardSidebar(
         sidebarMenu(id="tabs",
             menuItem("Mapview", tabName = "mapview", icon = icon("th")),
-            fileInput(inputId = "upload_poly", label = "Upload geopackage:", multiple = FALSE, accept = ".gpkg")
+            selectInput("gpkg", label="Select geopackage:", choices=c('kdtt','kdtt_mini'), selected='kdtt_mini')
       )
     ),
   dashboardBody(
@@ -32,25 +32,14 @@ ui = dashboardPage(skin="blue",
 
 server = function(input, output, session) {
 
-  lyr_names <- eventReactive(input$upload_poly, {
-    file <- input$upload_poly$datapath
-    ext <- tools::file_ext(file)
-    if(ext == "gpkg"){
-      st_layers(file)$name
-    }
-  })
-
   output$map1 <- renderLeaflet({
-    if (!is.null(input$upload_poly)) {
     m <- leaflet() %>%
       addProviderTiles("Esri.WorldImagery", group="Esri.WorldImagery") %>%
       addProviderTiles("Esri.WorldTopoMap", group="Esri.WorldTopoMap") %>%
       addMeasure(position="bottomleft", primaryLengthUnit="meters", primaryAreaUnit="sqmeters", activeColor="#3D535D", completedColor = "#7D4479")
       grps <- NULL
-      for(i in lyr_names()) {
-        file <- input$upload_poly$datapath
-        ext <- tools::file_ext(file)
-        x <- st_read(file, i, quiet=T) %>% st_transform(4326)
+      for(i in st_layers(paste0('www/',input$gpkg,'.gpkg'))$name) {
+        x <- st_read(paste0('www/',input$gpkg,'.gpkg'), i, quiet=T) %>% st_transform(4326)
         if (i=='KDTT') {m <- m %>% addPolygons(data=x, color='black', fill=F, weight=2, group=i)}
         else if (i=='Linear disturbances') {
           pop = ~paste("Industry type:", TYPE_INDUSTRY, "<br>Disturbance type:", TYPE_DISTURBANCE)
@@ -78,7 +67,6 @@ server = function(input, output, session) {
         options = layersControlOptions(collapsed = FALSE)) %>%
       hideGroup(c('fda', grps[-1]))
     m
-    }
   })
 
 }
