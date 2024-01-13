@@ -1,0 +1,10 @@
+name: kdtt_viewer
+title:
+username: beaconsproject
+account: beaconsproject
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 10908913
+bundleId: 8134335
+url: https://beaconsproject.shinyapps.io/kdtt_viewer/
+version: 1
