@@ -6,9 +6,6 @@ library(shinycssloaders)
 library(shinyjs)
 options(shiny.maxRequestSize=100*1024^2) 
 
-gpkg <- 'www/kdtt.gpkg'
-z <- readr::read_csv('www/layers.csv')
-
 ui = dashboardPage(skin="blue",
   dashboardHeader(title = "KDTT Explorer", titleWidth=320),
   dashboardSidebar(
@@ -32,14 +29,19 @@ ui = dashboardPage(skin="blue",
 )
 
 server = function(input, output, session) {
+  gpkg <- 'www/kdtt.gpkg'
+  z <- readr::read_csv('www/layers.csv')
+
   output$map1 <- renderLeaflet({
     x0 <- st_read(gpkg, 'KDTT', quiet=T) %>% st_transform(4326)
+    x00 <- st_read(gpkg, 'LAFN718 planning area', quiet=T) %>% st_transform(4326)
     grps <- NULL
     m <- leaflet() %>%
       addProviderTiles("Esri.WorldImagery", group="Esri.WorldImagery") %>%
       addProviderTiles("Esri.WorldTopoMap", group="Esri.WorldTopoMap") %>%
-      addPolygons(data=x0, color='black', fill=F, weight=2, group='KDTT')
-      for (i in z$map[-1]) {
+      addPolygons(data=x0, color='black', fill=F, weight=2, group='KDTT') %>%
+      addPolygons(data=x00, color='blue', fill=F, weight=2, group='LAFN718 planning area')
+      for (i in z$map[3:nrow(z)]) {
         x1 <- st_read(gpkg, i, quiet=T) %>% st_transform(4326)
         lbl <- pull(x1, z$label[z$map==i])
         if (z$type[z$map==i]=='poly') {
@@ -51,7 +53,7 @@ server = function(input, output, session) {
       }
       m <- m %>% addLayersControl(position = "topright",
         baseGroups=c("Esri.WorldTopoMap", "Esri.WorldImagery"),
-        overlayGroups = c('KDTT', grps),
+        overlayGroups = c('KDTT', 'LAFN718 planning area', grps),
         options = layersControlOptions(collapsed = FALSE)) %>%
         hideGroup(grps)
     m
