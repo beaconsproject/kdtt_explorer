@@ -4,70 +4,57 @@ library(tidyverse)
 library(shinydashboard)
 library(shinycssloaders)
 library(shinyjs)
-
 options(shiny.maxRequestSize=100*1024^2) 
 
+gpkg <- 'www/kdtt.gpkg'
+z <- readr::read_csv('www/layers.csv')
+
 ui = dashboardPage(skin="blue",
-    dashboardHeader(title = "BEACONs Disturbance Explorer", titleWidth=320),
-    dashboardSidebar(
-        sidebarMenu(id="tabs",
-            menuItem("Mapview", tabName = "mapview", icon = icon("th")),
-            selectInput("gpkg", label="Select geopackage:", choices=c('kdtt','kdtt_mini'), selected='kdtt_mini')
-      )
-    ),
+  dashboardHeader(title = "KDTT Explorer", titleWidth=320),
+  dashboardSidebar(
+    sidebarMenu(id="tabs",
+      menuItem("Explorer", tabName = "mapview", icon = icon("th"))#,
+    )
+  ),
   dashboardBody(
     useShinyjs(),
     tags$head(tags$style(".skin-blue .sidebar a { color: #8a8a8a; }")),
     tabItems(
       tabItem(tabName="mapview",
-            fluidRow(
-                tabBox(id = "one", width="12",
-                    tabPanel("Mapview", leafletOutput("map1", height=750) %>% withSpinner())
-                )
-            )
+        fluidRow(
+          tabBox(id = "one", width="12",
+            tabPanel("Mapview", leafletOutput("map1", height=750) %>% withSpinner())
+          ),
         )
-    )
+      )
+    )    
   )
 )
 
 server = function(input, output, session) {
-
   output$map1 <- renderLeaflet({
+    x0 <- st_read(gpkg, 'KDTT', quiet=T) %>% st_transform(4326)
+    grps <- NULL
     m <- leaflet() %>%
       addProviderTiles("Esri.WorldImagery", group="Esri.WorldImagery") %>%
       addProviderTiles("Esri.WorldTopoMap", group="Esri.WorldTopoMap") %>%
-      addMeasure(position="bottomleft", primaryLengthUnit="meters", primaryAreaUnit="sqmeters", activeColor="#3D535D", completedColor = "#7D4479")
-      grps <- NULL
-      for(i in st_layers(paste0('www/',input$gpkg,'.gpkg'))$name) {
-        x <- st_read(paste0('www/',input$gpkg,'.gpkg'), i, quiet=T) %>% st_transform(4326)
-        if (i=='KDTT') {m <- m %>% addPolygons(data=x, color='black', fill=F, weight=2, group=i)}
-        else if (i=='Linear disturbances') {
-          pop = ~paste("Industry type:", TYPE_INDUSTRY, "<br>Disturbance type:", TYPE_DISTURBANCE)
-          m <- m %>% addPolylines(data=x, color='orange', weight=2, group=i, popup=pop)
+      addPolygons(data=x0, color='black', fill=F, weight=2, group='KDTT')
+      for (i in z$map[-1]) {
+        x1 <- st_read(gpkg, i, quiet=T) %>% st_transform(4326)
+        lbl <- pull(x1, z$label[z$map==i])
+        if (z$type[z$map==i]=='poly') {
+          m <- m %>% addPolygons(data=x1, fill=z$fill[z$map==i], stroke=z$stroke[z$map==i], fillColor=z$fillColor[z$map==i], fillOpacity=z$fillOpacity[z$map==i], group=i, popup=~lbl)
+        } else {
+          m <- m %>% addPolylines(data=x1, color=z$color[z$map==i], weight=z$weight[z$map==i], group=i, popup=~lbl)
         }
-        else if (i=='Areal disturbances') {
-          pop = ~paste("Industry type:", TYPE_INDUSTRY, "<br>Disturbance type:", TYPE_DISTURBANCE)
-          m <- m %>% addPolygons(data=x, fill=T, stroke=F, fillColor='darkorange', fillOpacity=0.5, group=i, popup=pop)
-        }
-        else if (i=='Burned areas') {
-          pop = ~paste("Year of fire:", Year, "<br>Area of fire (ha):", round(Area_ha,1), "<br>Area in KDTT (ha):", round(Area_in_kdtt,1))
-          m <- m %>% addPolygons(data=x, fill=T, stroke=F, fillColor='red', fillOpacity=0.5, group=i, label=~Year, popup=pop)
-        }
-        else if (i=='CPCAD 2021') {
-          pop = ~paste("Name:", NAME_E, "<br>Aichi target:", AICHI_T11, "<br>IUCN category:", IUCN_CAT, "<br>OECM:", OECM, "<br>Protected date:", PROTDATE)
-          m <- m %>% addPolygons(data=x, fill=T, stroke=F, fillColor='darkgreen', fillOpacity=0.5, group=i, popup=pop)
-        }
-        else {m <- m %>% addPolygons(data=x, color='red', fill=T, weight=1, group=i)}
-        grps <- c(grps,i)
+          grps <- c(grps, i)
       }
-      m <- m %>% 
-      addLayersControl(position = "topright",
+      m <- m %>% addLayersControl(position = "topright",
         baseGroups=c("Esri.WorldTopoMap", "Esri.WorldImagery"),
-        overlayGroups = c("Graticule", grps),
+        overlayGroups = c('KDTT', grps),
         options = layersControlOptions(collapsed = FALSE)) %>%
-      hideGroup(c('fda', grps[-1]))
+        hideGroup(grps)
     m
   })
-
 }
 shinyApp(ui, server)

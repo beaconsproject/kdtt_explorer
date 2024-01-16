@@ -1,0 +1,15 @@
+gpkg <- 'www/kdtt.gpkg'
+z <- readr::read_csv('www/layers.csv')
+x0 <- st_read(gpkg, 'KDTT', quiet=T) %>% st_transform(4326)
+#x1 <- st_read(gpkg, 'Linear disturbances', quiet=T) %>% st_transform(4326)
+#x2 <- st_read(gpkg, 'Areal disturbances', quiet=T) %>% st_transform(4326)
+#x3 <- st_read(gpkg, 'Burned areas', quiet=T) %>% st_transform(4326)
+#x4 <- st_read(gpkg, 'Fire polygons', quiet=T) %>% st_transform(4326)
+#x11 <- st_read(gpkg, 'Caribou herds (YT)', quiet=T) %>% st_transform(4326)
+#x12 <- st_read(gpkg, 'Caribou herds (BC)', quiet=T) %>% st_transform(4326)
+#x15 <- st_read(gpkg, 'Thinhorn sheep', quiet=T) %>% st_transform(4326)
+#x19 <- st_read(gpkg, 'CPCAD 2021', quiet=T) %>% st_transform(4326)
+#x20 <- st_read(gpkg, 'Footprint (500m)', quiet=T) %>% st_transform(4326)
+#x21 <- st_read(gpkg, 'Intactness (500m)', quiet=T) %>% st_transform(4326)
+#x22 <- st_read(gpkg, 'Canada access 2010 (NT)', quiet=T) %>% st_transform(4326)
+
