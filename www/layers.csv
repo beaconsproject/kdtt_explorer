@@ -2,6 +2,7 @@ type,map,group,stroke,color,weight,opacity,fill,fillColor,fillOpacity,popup,labe
 poly,KDTT,KDTT,,black,2,1,FALSE,,,,
 poly,LAFN718 planning area,LAFN718 planning area,,black,2,1,FALSE,,,,
 poly,Draft IPCAs,Draft IPCAs,,,,,TRUE,red,0.25,,Name
+poly,BC IPCA (DKK_May2023),BC IPCA (DKK_May2023),,,,,TRUE,blue,0.25,,Name
 line,Linear disturbances,Linear disturbances,,orange,2,1,,,,,TYPE_DISTURBANCE
 poly,Areal disturbances,Areal disturbances,,,,,TRUE,darkorange,1,,TYPE_DISTURBANCE
 poly,Canada access 2010 (NT),Canada access 2010 (NT),,,,,TRUE,red,0.5,,Access
