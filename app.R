@@ -33,8 +33,8 @@ server = function(input, output, session) {
   z <- readr::read_csv('www/layers.csv')
 
   output$map1 <- renderLeaflet({
-    x0 <- st_read(gpkg, 'KDTT', quiet=T) %>% st_transform(4326)
-    x00 <- st_read(gpkg, 'LAFN718 planning area', quiet=T) %>% st_transform(4326)
+    x0 <- st_read(gpkg, 'KDTT', quiet=T)
+    x00 <- st_read(gpkg, 'LAFN718 planning area', quiet=T)
     grps <- NULL
     m <- leaflet() %>%
       addProviderTiles("Esri.WorldImagery", group="Esri.WorldImagery") %>%
@@ -42,7 +42,7 @@ server = function(input, output, session) {
       addPolygons(data=x0, color='black', fill=F, weight=2, group='KDTT') %>%
       addPolygons(data=x00, color='blue', fill=F, weight=2, group='LAFN718 planning area')
       for (i in z$map[3:nrow(z)]) {
-        x1 <- st_read(gpkg, i, quiet=T) %>% st_transform(4326)
+        x1 <- st_read(gpkg, i, quiet=T)
         lbl <- pull(x1, z$label[z$map==i])
         if (z$type[z$map==i]=='poly') {
           m <- m %>% addPolygons(data=x1, fill=z$fill[z$map==i], stroke=z$stroke[z$map==i], fillColor=z$fillColor[z$map==i], fillOpacity=z$fillOpacity[z$map==i], group=i, popup=~lbl)

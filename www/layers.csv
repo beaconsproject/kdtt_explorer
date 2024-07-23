@@ -5,7 +5,7 @@ poly,Draft IPCAs,Draft IPCAs,,,,,TRUE,red,0.25,,Name
 poly,BC IPCA (DKK_May2023),BC IPCA (DKK_May2023),,,,,TRUE,blue,0.25,,Name
 line,Linear disturbances,Linear disturbances,,orange,2,1,,,,,TYPE_DISTURBANCE
 poly,Areal disturbances,Areal disturbances,,,,,TRUE,darkorange,1,,TYPE_DISTURBANCE
-poly,Canada access 2010 (NT),Canada access 2010 (NT),,,,,TRUE,red,0.5,,Access
+poly,Canada access 2010 (NT),Canada access 2010 (NT),,,,,TRUE,darkorange,1,,Label
 poly,Footprint (500m),Footprint (500m),,,,,TRUE,darkred,0.5,,Label
 poly,Intactness (500m),Intactness (500m),,,,,TRUE,darkgreen,0.5,,Label
 poly,Fire polygons,Fire polygons,,,,,TRUE,orange,0.5,,Year
@@ -14,3 +14,9 @@ poly,Caribou herds (YT),Caribou herds (YT),,,,,TRUE,blue,0.5,,HERD
 poly,Caribou herds (BC),Caribou herds (BC),,,,,TRUE,green,0.5,,HERD_NAME
 poly,Thinhorn sheep,Thinhorn sheep,,,,,TRUE,green,0.5,,Range
 poly,CPCAD 2021,CPCAD 2021,,,,,TRUE,darkgreen,0.5,,NAME_E
+poly,KFRP Area Specific Management,KFRP Area Specific Management,,,,,TRUE,yellow,0.5,,Name
+poly,KFRP Garden Creek Subregional Plan,KFRP Garden Creek Subregional Plan,,,,,TRUE,orange,0.5,,Name
+poly,KFRP General Forest Management,KFRP General Forest Management,,,,,TRUE,green,0.5,,Name
+poly,KFRP Gu Cha Duga-Kaska Cultural and Wildlands,KFRP Gu Cha Duga-Kaska Cultural and Wildlands,,,,,TRUE,red,0.5,,Name
+poly,KFRP Local Planning,KFRP Local Planning,,,,,TRUE,purple,0.5,,Name
+poly,KFRP Withdrawal,KFRP Withdrawal,,,,,TRUE,grey,0.5,,Name
